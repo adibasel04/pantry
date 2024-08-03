@@ -9,6 +9,7 @@ export default function Home() {
   const [pantry, setPantry] = useState([]);
   const [open, setOpen] = useState(false); // Set initial state to false
   const [itemName, setItemName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const updatePantry = async () => {
     try {
@@ -67,6 +68,10 @@ export default function Home() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const filteredPantry = pantry.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <Box
       width="100vw"
@@ -117,61 +122,64 @@ export default function Home() {
         variant="contained"
         onClick={handleOpen}
       >
-          Add New Item
-</Button>
-<Box border="1px solid #333">
-  <Box
-    width="800px"
-    height="100px"
-    bgcolor="#ADD8E6"
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-  >
-    <Typography variant="h2" color="#333">
-  Pantry Items
-</Typography>
-</Box>
-<Stack width="800px" height="300px" spacing={2} overflow="auto">
-{pantry.map(({name, quantity}) => (
-  <Box 
-    key={name} 
-    width="100%"
-    minHeight="150px"
-    display="flex"
-    alignItems="center"
-    justifyContent="space-between"
-    bgcolor="#f0f0f0"
-    padding={5}
-  >
-    <Typography variant='h3'color= '#333' textAlign='center'>
-      {name.charAt(0).toUpperCase()+name.slice(1)}
-     </Typography>
-     <Typography variant='h3'color= '#333' textAlign='center'>
-      {quantity}
-     </Typography>
-     <Stack direction ="row" spacing={2}>
-      <Button
-        variant="contained"
-        onClick={()=>{
-          addItem(name)
-
-        }}
+        Add New Item
+      </Button>
+      <TextField
+        variant="outlined"
+        label="Search Pantry"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      <Box border="1px solid #333">
+        <Box
+          width="800px"
+          height="100px"
+          bgcolor="#ADD8E6"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
         >
-          Add
-        </Button>
-     </Stack>
-     <Button variant= "contained"
-      onClick={()=>{
-        removeItem(name)
-     }}
-     >
-        Remove 
-        </Button>
+          <Typography variant="h2" color="#333">
+            Pantry Items
+          </Typography>
+        </Box>
+        <Stack width="800px" height="300px" spacing={2} overflow="auto">
+          {filteredPantry.map(({ name, quantity }) => (
+            <Box 
+              key={name} 
+              width="100%"
+              minHeight="150px"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              bgcolor="#f0f0f0"
+              padding={5}
+            >
+              <Typography variant='h3' color='#333' textAlign='center'>
+                {name.charAt(0).toUpperCase() + name.slice(1)}
+              </Typography>
+              <Typography variant='h3' color='#333' textAlign='center'>
+                {quantity}
+              </Typography>
+              <Stack direction="row" spacing={2}>
+                <Button
+                  variant="contained"
+                  onClick={() => addItem(name)}
+                >
+                  Add
+                </Button>
+                <Button 
+                  variant="contained"
+                  onClick={() => removeItem(name)}
+                >
+                  Remove
+                </Button>
+              </Stack>
+            </Box>
+          ))}
+        </Stack>
+      </Box>
     </Box>
-))}
-</Stack>
-</Box>
-</Box>
-  )
+  );
 }
